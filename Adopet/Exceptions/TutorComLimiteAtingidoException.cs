@@ -1,6 +1,6 @@
 namespace Adopet.Exceptions;
 
-public class TutorComLimiteAtingidoException : Exception
+public class TutorComLimiteAtingidoException : AdocaoException
 {
     public TutorComLimiteAtingidoException(string? mensagem) :
         base(mensagem)

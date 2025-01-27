@@ -34,32 +34,29 @@ public class AdocaoService
         var pet = _petRepository.GetById(dto.IdPet);
         var tutor = _tutorRepository.GetById(dto.IdTutor);
 
-        if (pet is null || tutor is null)
+        if(pet == null || tutor == null)
         {
             throw new NullReferenceException();
         }
 
         if (pet.Adotado)
         {
-            throw new PetAdotadoException("Pet já foi adotado!");
+            throw new PetAdotadoException("Pet já foi adotado!", new ApplicationException());
         }
-
-        var aguardandoAvaliacao = _adocaoRepository.ExistsByPetIdAndStatus(pet.Id, StatusAdocao.AGUARDANDO_AVALIACAO);
-
-        if (aguardandoAvaliacao)
+        if(_adocaoRepository.ExistsByPetIdAndStatus(pet.Id, StatusAdocao.AGUARDANDO_AVALIACAO))
         {
             throw new PetEmProcessoDeAdocaoException("Pet está sob processo de adoção!");
         }
-
-        var numeroDeAdocoes = _adocaoRepository.CountByTutorIdAndStatus(tutor.Id, StatusAdocao.APROVADO);
-        
+        var numeroDeAdocoes = _adocaoRepository.
+            CountByTutorIdAndStatus(tutor.Id, StatusAdocao.APROVADO);
         if (numeroDeAdocoes >= 2)
         {
             throw new TutorComLimiteAtingidoException("Tutor não pode mais adotar!");
         }
-      
-        _adocaoRepository.Add(new Adocao(tutor, pet, dto.Motivo));
+
+        _adocaoRepository.Add(new Adocao(null, pet, dto.Motivo));           
     }
+
 
     public void Aprovar(AprovarAdocaoDto dto)
     {

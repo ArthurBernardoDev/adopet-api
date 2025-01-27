@@ -42,10 +42,10 @@ public class AdocaoController : ControllerBase
         {
             return NotFound("Falha ao encontrar objeto solicitado!");
         }
-        catch (Exception ex) when (ex is PetAdotadoException || ex is PetEmProcessoDeAdocaoException || ex is TutorComLimiteAtingidoException)
+        catch (AdocaoException ex)
         {
             return BadRequest("Houve um problema no processo de adoção!");
-        }           
+        }          
         catch (Exception ex)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
