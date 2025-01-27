@@ -33,25 +33,8 @@ public class AdocaoController : ControllerBase
     [HttpPost]
     public IActionResult Solicitar([FromBody] SolicitacaoDeAdocaoDto dados)
     {
-        try
-        {
-            _acaoService.Solicitar(dados);
-            return Ok("Adoção solicitada com sucesso!");
-        }
-        catch (NullReferenceException ex)
-        {
-            return NotFound("Falha ao encontrar objeto solicitado!");
-        }
-        catch (AdocaoException ex)
-        {
-            return BadRequest("Houve um problema no processo de adoção!");
-        }          
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                "Falha interna na aplicação!");
-        }
-
+        _acaoService.Solicitar(dados);
+        return Ok("Adoção solicitada com sucesso!");
     }
 
     [HttpPut("aprovar")]

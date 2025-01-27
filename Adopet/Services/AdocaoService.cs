@@ -48,7 +48,7 @@ public class AdocaoService
             throw new PetEmProcessoDeAdocaoException("Pet está sob processo de adoção!");
         }
         var numeroDeAdocoes = _adocaoRepository.
-            CountByTutorIdAndStatus(tutor.Id, StatusAdocao.APROVADO);
+               CountByTutorIdAndStatus(tutor.Id, StatusAdocao.APROVADO);
         if (numeroDeAdocoes >= 2)
         {
             throw new TutorComLimiteAtingidoException("Tutor não pode mais adotar!");
@@ -56,7 +56,6 @@ public class AdocaoService
 
         _adocaoRepository.Add(new Adocao(null, pet, dto.Motivo));           
     }
-
 
     public void Aprovar(AprovarAdocaoDto dto)
     {
@@ -69,6 +68,7 @@ public class AdocaoService
     public void Reprovar(ReprovarAdocaoDto dto)
     {
         var adocao = _adocaoRepository.GetById(dto.IdAdocao);
+        if(adocao.Status == StatusAdocao.APROVADO)
         adocao.MarcarComoReprovada(dto.Justificativa);
         _adocaoRepository.SaveChanges();
     }
