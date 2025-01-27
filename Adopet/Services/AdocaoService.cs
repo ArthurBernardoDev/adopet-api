@@ -1,4 +1,5 @@
 ﻿using Adopet.Dtos;
+using Adopet.Exceptions;
 using Adopet.Models;
 using Adopet.Models.Enums;
 using Adopet.Repositories;
@@ -33,6 +34,30 @@ public class AdocaoService
         var pet = _petRepository.GetById(dto.IdPet);
         var tutor = _tutorRepository.GetById(dto.IdTutor);
 
+        if (pet is null || tutor is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        if (pet.Adotado)
+        {
+            throw new PetAdotadoException("Pet já foi adotado!");
+        }
+
+        var aguardandoAvaliacao = _adocaoRepository.ExistsByPetIdAndStatus(pet.Id, StatusAdocao.AGUARDANDO_AVALIACAO);
+
+        if (aguardandoAvaliacao)
+        {
+            throw new PetEmProcessoDeAdocaoException("Pet está sob processo de adoção!");
+        }
+
+        var numeroDeAdocoes = _adocaoRepository.CountByTutorIdAndStatus(tutor.Id, StatusAdocao.APROVADO);
+        
+        if (numeroDeAdocoes >= 2)
+        {
+            throw new TutorComLimiteAtingidoException("Tutor não pode mais adotar!");
+        }
+      
         _adocaoRepository.Add(new Adocao(tutor, pet, dto.Motivo));
     }
 
